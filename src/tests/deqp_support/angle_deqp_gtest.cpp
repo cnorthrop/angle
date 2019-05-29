@@ -80,7 +80,7 @@ const char *gCaseListFiles[] = {OPENGL_CTS_DIR("aosp_mustpass/master/gles2-maste
 
 #undef OPENGL_CTS_DIR
 
-const char *gTestExpectationsFiles[] = {
+ const char *gTestExpectationsFiles[] = {
     "deqp_gles2_test_expectations.txt",     "deqp_gles3_test_expectations.txt",
     "deqp_gles31_test_expectations.txt",    "deqp_egl_test_expectations.txt",
     "deqp_khr_gles2_test_expectations.txt", "deqp_khr_gles3_test_expectations.txt",
