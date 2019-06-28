@@ -1412,6 +1412,7 @@ void GenerateCaps(const FunctionsGL *functions,
                                   functions->isAtLeastGL(gl::Version(3, 2));
 
     extensions->textureExternalUpdateANGLE = true;
+    extensions->texture3D                  = false;
 }
 
 void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *features)
