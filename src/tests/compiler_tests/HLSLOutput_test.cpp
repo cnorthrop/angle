@@ -199,7 +199,7 @@ TEST_F(HLSLOutputTest, Array)
     compile(shaderString);
     // The unique id of arr is 1030, which is given to the symbol when parsed and inserted to the
     // symbol table
-    EXPECT_TRUE(foundInCode("_arr1030[2]"));
+    EXPECT_TRUE(foundInCode("_arr1036[2]"));
 }
 
 // Test that initializing array with previously declared array will not be overwritten
@@ -220,9 +220,9 @@ TEST_F(HLSLOutputTest, SameNameArray)
         })";
     compile(shaderString);
     // The unique id of the original array, arr, is 1029
-    EXPECT_TRUE(foundInCode("_arr1029[2]"));
+    EXPECT_TRUE(foundInCode("_arr1035[2]"));
     // The unique id of the new array, arr, is 1030
-    EXPECT_TRUE(foundInCode("_arr1030[2]"));
+    EXPECT_TRUE(foundInCode("_arr1036[2]"));
 }
 
 // Test that passing a non-struct member of a std140 structure to a function won't trigger the
