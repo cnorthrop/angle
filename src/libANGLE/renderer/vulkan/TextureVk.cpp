@@ -1356,9 +1356,23 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
         imageUsageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     }
 
-    ANGLE_TRY(mImage->init(contextVk, mState.getType(), extents, format, 1, imageUsageFlags,
-                           levelCount,
-                           mState.getType() == gl::TextureType::CubeMap ? gl::kCubeFaceCount : 1));
+    uint32_t layers = 1;
+    gl::Extents newExtents = extents;
+    switch (mState.getType())
+    {
+        case gl::TextureType::CubeMap:
+            layers = gl::kCubeFaceCount;
+            break;
+        case gl::TextureType::_2DArray:
+            layers = extents.depth;
+            newExtents.depth = 1;
+            break;
+        default:
+            break;
+    }
+
+    ANGLE_TRY(mImage->init(contextVk, mState.getType(), newExtents, format, 1, imageUsageFlags,
+                           levelCount, layers));
 
     const VkMemoryPropertyFlags flags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
 
@@ -1399,7 +1413,17 @@ angle::Result TextureVk::initImageViews(ContextVk *contextVk,
     // http://anglebug.com/3148
     uint32_t baseLevel  = getNativeImageLevel(0);
     uint32_t baseLayer  = getNativeImageLayer(0);
-    uint32_t layerCount = mState.getType() == gl::TextureType::CubeMap ? gl::kCubeFaceCount : 1;
+    uint32_t layerCount = 1;
+    switch (mState.getType())
+    {
+        case gl::TextureType::CubeMap:
+            layerCount = gl::kCubeFaceCount;
+            break;
+        case gl::TextureType::_2DArray:
+            layerCount = mImage->getLayerCount();
+        default:
+            break;
+    }
     VkImageAspectFlags aspectFlags = vk::GetFormatAspectFlags(format.angleFormat());
     // If we are reading a depth buffer, select only the depth component/aspect
     if (aspectFlags & VK_IMAGE_ASPECT_DEPTH_BIT)
@@ -1413,7 +1437,7 @@ angle::Result TextureVk::initImageViews(ContextVk *contextVk,
     ANGLE_TRY(mImage->initLayerImageView(contextVk, mState.getType(), aspectFlags, mappedSwizzle,
                                          &mReadBaseLevelImageView, baseLevel, 1, baseLayer,
                                          layerCount));
-    if (mState.getType() == gl::TextureType::CubeMap)
+    if (mState.getType() == gl::TextureType::CubeMap || mState.getType() == gl::TextureType::_2DArray)
     {
         gl::TextureType arrayType = vk::Get2DTextureType(layerCount, mImage->getSamples());
 

@@ -1505,6 +1505,7 @@ angle::Result ImageHelper::initExternal(Context *context,
 
     // Validate that the input layerCount is compatible with the texture type
     ASSERT(textureType != gl::TextureType::_3D || layerCount == 1);
+    ASSERT(textureType != gl::TextureType::_2DArray || extents.depth == 1);
     ASSERT(textureType != gl::TextureType::External || layerCount == 1);
     ASSERT(textureType != gl::TextureType::Rectangle || layerCount == 1);
     ASSERT(textureType != gl::TextureType::CubeMap || layerCount == gl::kCubeFaceCount);
@@ -1523,7 +1524,14 @@ angle::Result ImageHelper::initExternal(Context *context,
     imageInfo.format                = format.vkImageFormat;
     imageInfo.extent.width          = static_cast<uint32_t>(extents.width);
     imageInfo.extent.height         = static_cast<uint32_t>(extents.height);
-    imageInfo.extent.depth          = static_cast<uint32_t>(extents.depth);
+    if (mLayerCount > 1)
+    {
+        imageInfo.extent.depth = 1;
+    }
+    else
+    {
+        imageInfo.extent.depth = static_cast<uint32_t>(extents.depth);
+    }
     imageInfo.mipLevels             = mipLevels;
     imageInfo.arrayLayers           = mLayerCount;
     imageInfo.samples               = gl_vk::GetSamples(samples);
@@ -2148,6 +2156,10 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
 
     gl_vk::GetOffset(offset, &copy.imageOffset);
     gl_vk::GetExtent(extents, &copy.imageExtent);
+    if (index.getType() == gl::TextureType::_2DArray)
+    {
+        copy.imageExtent.depth = 1;
+    }
 
     // TODO: http://anglebug.com/3437 - need to split packed depth_stencil into
     // staging buffers for upload.
