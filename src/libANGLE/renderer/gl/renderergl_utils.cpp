@@ -1412,8 +1412,9 @@ void GenerateCaps(const FunctionsGL *functions,
                                   functions->isAtLeastGL(gl::Version(3, 2));
 
     extensions->textureExternalUpdateANGLE = true;
-    // TODO(cnorthrop): Enable this when test failures are understood (anglebug.com/3638)
-    extensions->texture3DOES = false;
+    extensions->texture3DOES = functions->isAtLeastGL(gl::Version(1, 2)) ||
+                               functions->isAtLeastGLES(gl::Version(3, 0)) ||
+                               functions->hasGLESExtension("GL_OES_texture_3D");
 }
 
 void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *features)

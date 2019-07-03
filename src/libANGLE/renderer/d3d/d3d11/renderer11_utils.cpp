@@ -1652,8 +1652,7 @@ void GenerateCaps(ID3D11Device *device,
     extensions->provokingVertex          = true;
     extensions->blendFuncExtended        = true;
     extensions->maxDualSourceDrawBuffers = 1;
-    // TODO(cnorthrop): Enable this when test failures are understood (anglebug.com/3639)
-    extensions->texture3DOES             = false;
+    extensions->texture3DOES             = true;
 
     // D3D11 cannot support reading depth texture as a luminance texture.
     // It treats it as a red-channel-only texture.

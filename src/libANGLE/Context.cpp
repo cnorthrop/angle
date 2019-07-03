@@ -7772,7 +7772,7 @@ bool Context::getQueryParameterInfo(GLenum pname, GLenum *type, unsigned int *nu
                 *numParams = 1;
                 return true;
         }
-        case GL_TEXTURE_BINDING_3D_OES:
+        case GL_TEXTURE_BINDING_3D:
             if ((getClientMajorVersion() < 3) && !getExtensions().texture3DOES)
             {
                 return false;
