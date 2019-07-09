@@ -1021,7 +1021,12 @@ angle::Result Texture::setImage(Context *context,
     ANGLE_TRY(releaseTexImageInternal(context));
     ANGLE_TRY(orphanImages(context));
 
-    ImageIndex index = ImageIndex::MakeFromTarget(target, level, size.depth);
+    GLint layerCount =
+        (target == TextureTarget::_2DArray || target == TextureTarget::_2DMultisampleArray)
+            ? size.depth
+            : 1;
+
+    ImageIndex index = ImageIndex::MakeFromTarget(target, level, layerCount);
 
     ANGLE_TRY(mTexture->setImage(context, index, internalFormat, size, format, type, unpackState,
                                  pixels));
