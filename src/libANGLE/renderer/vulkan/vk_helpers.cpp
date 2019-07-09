@@ -2159,6 +2159,7 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
     if (index.getType() == gl::TextureType::_2DArray)
     {
         copy.imageExtent.depth = 1;
+        copy.imageOffset.z     = 0;
     }
 
     // TODO: http://anglebug.com/3437 - need to split packed depth_stencil into
