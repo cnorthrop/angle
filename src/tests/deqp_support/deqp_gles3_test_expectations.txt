@@ -561,6 +561,7 @@
 3189 VULKAN : dEQP-GLES3.functional.fbo.completeness.layer.2darr* = SKIP
 3189 VULKAN : dEQP-GLES3.functional.fbo.color.tex2darray.* = SKIP
 3189 VULKAN : dEQP-GLES3.functional.state_query.texture.*2d_array* = SKIP
+3189 VULKAN : dEQP-GLES3.functional.texture.format.sized.2d_array.srgb* = SKIP
 3189 VULKAN : dEQP-GLES3.functional.texture.filtering.*2d_array* = SKIP
 3189 VULKAN : dEQP-GLES3.functional.texture.shadow.2d_array.* = SKIP
 3189 VULKAN : dEQP-GLES3.functional.texture.specification.basic_teximage3d.*2d_array* = SKIP

@@ -166,7 +166,17 @@ ImageIndex ImageIndex::Make3D(GLint levelIndex, GLint layerIndex)
 
 ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex)
 {
+    // RIGHT HERE, I THINK WE NEED TO MAKE THIS TARGET WITH AN INDEX RANGE
+    // THAT OR CALL A DIFFERENT FUNCTION
     return ImageIndex(TextureTargetToType(target), levelIndex, TextureTargetToLayer(target), 1);
+}
+
+ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, GLint layerCount)
+{
+    // RIGHT HERE, I THINK WE NEED TO MAKE THIS TARGET WITH AN INDEX RANGE
+    // THAT OR CALL A DIFFERENT FUNCTION
+    TextureType textureType = TextureTargetToType(target);
+    return ImageIndex::MakeFromType(textureType, levelIndex, TextureTargetToLayer(target), layerCount);
 }
 
 ImageIndex ImageIndex::MakeFromType(TextureType type,
