@@ -1421,6 +1421,7 @@ angle::Result TextureVk::initImageViews(ContextVk *contextVk,
             break;
         case gl::TextureType::_2DArray:
             layerCount = mImage->getLayerCount();
+            break;
         default:
             break;
     }
