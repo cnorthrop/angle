@@ -50,6 +50,7 @@ class ImageIndex
     static ImageIndex Make2DArrayRange(GLint levelIndex, GLint layerIndex, GLint layerCount);
     static ImageIndex Make3D(GLint levelIndex, GLint layerIndex = kEntireLevel);
     static ImageIndex MakeFromTarget(TextureTarget target, GLint levelIndex);
+    static ImageIndex MakeFromTarget(TextureTarget target, GLint levelIndex, GLint layerCount);
     static ImageIndex MakeFromType(TextureType type,
                                    GLint levelIndex,
                                    GLint layerIndex = kEntireLevel,
