@@ -557,14 +557,7 @@
 3188 VULKAN : dEQP-GLES3.functional.texture.units.4_units.only_3d.* = SKIP
 
 // 2D array (anglebug.com/3189), new formats in ES 3.0 (anglebug.com/3190):
-3189 VULKAN : dEQP-GLES3.functional.shaders.texture_functions.*2darray* = SKIP
-3189 VULKAN : dEQP-GLES3.functional.fbo.completeness.layer.2darr* = SKIP
 3189 VULKAN : dEQP-GLES3.functional.fbo.color.tex2darray.* = SKIP
-3189 VULKAN : dEQP-GLES3.functional.state_query.texture.*2d_array* = SKIP
-3189 VULKAN : dEQP-GLES3.functional.texture.format.sized.2d_array.srgb* = SKIP
-3189 VULKAN : dEQP-GLES3.functional.texture.filtering.*2d_array* = SKIP
-3189 VULKAN : dEQP-GLES3.functional.texture.shadow.2d_array.* = SKIP
-3189 VULKAN : dEQP-GLES3.functional.texture.specification.basic_teximage3d.*2d_array* = SKIP
 3189 VULKAN : dEQP-GLES3.functional.texture.specification.texstorage3d.format.*2d_array = SKIP
 3189 VULKAN : dEQP-GLES3.functional.texture.specification.texstorage3d.size.*2d_array* = SKIP
 3189 VULKAN : dEQP-GLES3.functional.texture.specification.teximage3d_depth*2d_array = SKIP
@@ -606,7 +599,6 @@
 // Functional texture general failures:
 3190 VULKAN : dEQP-GLES3.functional.texture.vertex.2d.* = SKIP
 3190 VULKAN : dEQP-GLES3.functional.texture.vertex.cube.* = SKIP
-3190 VULKAN : dEQP-GLES3.functional.texture.vertex.2d_array.* = SKIP
 3190 VULKAN : dEQP-GLES3.functional.texture.units.*2d* = SKIP
 3190 VULKAN : dEQP-GLES3.functional.texture.units.*cube* = SKIP
 3190 VULKAN : dEQP-GLES3.functional.texture.units.*mixed* = SKIP
