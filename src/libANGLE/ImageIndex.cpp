@@ -166,15 +166,12 @@ ImageIndex ImageIndex::Make3D(GLint levelIndex, GLint layerIndex)
 
 ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex)
 {
-    // RIGHT HERE, I THINK WE NEED TO MAKE THIS TARGET WITH AN INDEX RANGE
-    // THAT OR CALL A DIFFERENT FUNCTION
     return ImageIndex(TextureTargetToType(target), levelIndex, TextureTargetToLayer(target), 1);
 }
 
 ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, Extents extents)
 {
-    // RIGHT HERE, I THINK WE NEED TO MAKE THIS TARGET WITH AN INDEX RANGE
-    // THAT OR CALL A DIFFERENT FUNCTION
+    // TODO: Find a better way to do this
     TextureType textureType = TextureTargetToType(target);
     GLint layerCount =
         (textureType == TextureType::_2DArray || textureType == TextureType::_2DMultisampleArray)
@@ -185,8 +182,7 @@ ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, Ex
 
 ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, Box area)
 {
-    // RIGHT HERE, I THINK WE NEED TO MAKE THIS TARGET WITH AN INDEX RANGE
-    // THAT OR CALL A DIFFERENT FUNCTION
+    // TODO: Find a better way to do this
     TextureType textureType = TextureTargetToType(target);
     GLint layerCount =
         (textureType == TextureType::_2DArray || textureType == TextureType::_2DMultisampleArray)
