@@ -171,12 +171,29 @@ ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex)
     return ImageIndex(TextureTargetToType(target), levelIndex, TextureTargetToLayer(target), 1);
 }
 
-ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, GLint layerCount)
+ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, Extents extents)
 {
     // RIGHT HERE, I THINK WE NEED TO MAKE THIS TARGET WITH AN INDEX RANGE
     // THAT OR CALL A DIFFERENT FUNCTION
     TextureType textureType = TextureTargetToType(target);
+    GLint layerCount =
+        (textureType == TextureType::_2DArray || textureType == TextureType::_2DMultisampleArray)
+            ? extents.depth
+            : 1;
     return ImageIndex::MakeFromType(textureType, levelIndex, TextureTargetToLayer(target), layerCount);
+}
+
+ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, Box area)
+{
+    // RIGHT HERE, I THINK WE NEED TO MAKE THIS TARGET WITH AN INDEX RANGE
+    // THAT OR CALL A DIFFERENT FUNCTION
+    TextureType textureType = TextureTargetToType(target);
+    GLint layerCount =
+        (textureType == TextureType::_2DArray || textureType == TextureType::_2DMultisampleArray)
+            ? area.depth
+            : 1;
+    return ImageIndex::MakeFromType(textureType, levelIndex, TextureTargetToLayer(target),
+                                    layerCount);
 }
 
 ImageIndex ImageIndex::MakeFromType(TextureType type,

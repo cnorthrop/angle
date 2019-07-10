@@ -1524,12 +1524,14 @@ angle::Result ImageHelper::initExternal(Context *context,
     imageInfo.format                = format.vkImageFormat;
     imageInfo.extent.width          = static_cast<uint32_t>(extents.width);
     imageInfo.extent.height         = static_cast<uint32_t>(extents.height);
+    // Maybe check here on type instead of layer count?
     if (mLayerCount > 1)
     {
         imageInfo.extent.depth = 1;
     }
     else
     {
+        ASSERT(textureType != gl::TextureType::_2DArray || extents.depth == 1);
         imageInfo.extent.depth = static_cast<uint32_t>(extents.depth);
     }
     imageInfo.mipLevels             = mipLevels;
