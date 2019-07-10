@@ -2158,6 +2158,7 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
 
     gl_vk::GetOffset(offset, &copy.imageOffset);
     gl_vk::GetExtent(extents, &copy.imageExtent);
+    // TODO: Move these to GetOffset and GetExtent, or find a better way to assign them
     if (index.getType() == gl::TextureType::_2DArray)
     {
         copy.imageExtent.depth = 1;
