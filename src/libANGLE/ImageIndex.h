@@ -51,8 +51,6 @@ class ImageIndex
     static ImageIndex Make2DArrayRange(GLint levelIndex, GLint layerIndex, GLint layerCount);
     static ImageIndex Make3D(GLint levelIndex, GLint layerIndex = kEntireLevel);
     static ImageIndex MakeFromTarget(TextureTarget target, GLint levelIndex);
-    static ImageIndex MakeFromTarget(TextureTarget target, GLint levelIndex, Box area);
-    static ImageIndex MakeFromTarget(TextureTarget target, GLint levelIndex, Extents extents);
     static ImageIndex MakeFromType(TextureType type,
                                    GLint levelIndex,
                                    GLint layerIndex = kEntireLevel,
@@ -60,6 +58,9 @@ class ImageIndex
     static ImageIndex Make2DMultisample();
     static ImageIndex Make2DMultisampleArray(GLint layerIndex = kEntireLevel);
     static ImageIndex Make2DMultisampleArrayRange(GLint layerIndex, GLint layerCount);
+
+    template <typename area>
+    static ImageIndex MakeFromTarget(TextureTarget target, GLint levelIndex, area dimensions);
 
     static constexpr GLint kEntireLevel = static_cast<GLint>(-1);
 

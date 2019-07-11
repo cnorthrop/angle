@@ -169,28 +169,26 @@ ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex)
     return ImageIndex(TextureTargetToType(target), levelIndex, TextureTargetToLayer(target), 1);
 }
 
-ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, Extents extents)
+template <typename area>
+ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, area dimensions)
 {
-    // TODO: Find a better way to do this
     TextureType textureType = TextureTargetToType(target);
-    GLint layerCount =
-        (textureType == TextureType::_2DArray || textureType == TextureType::_2DMultisampleArray)
-            ? extents.depth
-            : 1;
-    return ImageIndex::MakeFromType(textureType, levelIndex, TextureTargetToLayer(target), layerCount);
-}
 
-ImageIndex ImageIndex::MakeFromTarget(TextureTarget target, GLint levelIndex, Box area)
-{
-    // TODO: Find a better way to do this
-    TextureType textureType = TextureTargetToType(target);
     GLint layerCount =
         (textureType == TextureType::_2DArray || textureType == TextureType::_2DMultisampleArray)
-            ? area.depth
+            ? dimensions.depth
             : 1;
+
     return ImageIndex::MakeFromType(textureType, levelIndex, TextureTargetToLayer(target),
                                     layerCount);
 }
+
+template ImageIndex ImageIndex::MakeFromTarget<Extents>(TextureTarget target,
+                                                        GLint levelIndex,
+                                                        Extents extents);
+template ImageIndex ImageIndex::MakeFromTarget<Box>(TextureTarget target,
+                                                    GLint levelIndex,
+                                                    Box area);
 
 ImageIndex ImageIndex::MakeFromType(TextureType type,
                                     GLint levelIndex,

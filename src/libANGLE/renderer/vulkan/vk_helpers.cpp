@@ -1524,16 +1524,8 @@ angle::Result ImageHelper::initExternal(Context *context,
     imageInfo.format                = format.vkImageFormat;
     imageInfo.extent.width          = static_cast<uint32_t>(extents.width);
     imageInfo.extent.height         = static_cast<uint32_t>(extents.height);
-    // Maybe check here on type instead of layer count?
-    if (mLayerCount > 1)
-    {
-        imageInfo.extent.depth = 1;
-    }
-    else
-    {
-        ASSERT(textureType != gl::TextureType::_2DArray || extents.depth == 1);
-        imageInfo.extent.depth = static_cast<uint32_t>(extents.depth);
-    }
+    imageInfo.extent.depth          = static_cast<uint32_t>(extents.depth);
+
     imageInfo.mipLevels             = mipLevels;
     imageInfo.arrayLayers           = mLayerCount;
     imageInfo.samples               = gl_vk::GetSamples(samples);
@@ -2157,13 +2149,10 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
     copy.imageSubresource.layerCount     = index.getLayerCount();
 
     gl_vk::GetOffset(offset, &copy.imageOffset);
-    gl_vk::GetExtent(extents, &copy.imageExtent);
-    // TODO: Move these to GetOffset and GetExtent, or find a better way to assign them
-    if (index.getType() == gl::TextureType::_2DArray)
-    {
-        copy.imageExtent.depth = 1;
-        copy.imageOffset.z     = 0;
-    }
+
+    copy.imageExtent.width  = extents.width;
+    copy.imageExtent.height = extents.height;
+    copy.imageExtent.depth  = (index.getLayerCount() > 1) ? 1 : extents.depth;
 
     // TODO: http://anglebug.com/3437 - need to split packed depth_stencil into
     // staging buffers for upload.
