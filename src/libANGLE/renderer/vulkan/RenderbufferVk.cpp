@@ -88,7 +88,7 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
         // Clear the renderbuffer if it has emulated channels.
         mImage->stageClearIfEmulatedFormat(gl::ImageIndex::Make2D(0), vkFormat);
 
-        mRenderTarget.init(mImage, &mImageView, nullptr, 0, 0);
+        mRenderTarget.init(mImage, &mImageView, &mImageView, nullptr, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -181,7 +181,7 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
                                              imageVk->getImageLayer(), 1));
     }
 
-    mRenderTarget.init(mImage, &mImageView,
+    mRenderTarget.init(mImage, &mImageView, &mImageView,
                        mCubeImageFetchView.valid() ? &mCubeImageFetchView : nullptr,
                        imageVk->getImageLevel(), imageVk->getImageLayer());
 
