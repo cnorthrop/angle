@@ -1123,6 +1123,54 @@ angle::Result TextureVk::setBaseLevel(const gl::Context *context, GLuint baseLev
         mImageOriginalMips[i].resize(mImage->getLevelCount());
     }
 
+    const gl::ImageDesc &baseLevelDesc  = mState.getBaseLevelDesc();
+    const gl::Extents &baseLevelExtents = baseLevelDesc.size;
+    const uint32_t levelCount           = getLevelCount();
+
+    const vk::Format &format =
+        contextVk->getRenderer()->getFormat(baseLevelDesc.format.info->sizedInternalFormat);
+
+    // Stage the image updates using current base level.  This will prevent us from losing data.
+    // The staged updates won't be applied until the image has the requisite mip levels
+    for (uint32_t layer = 0; layer < mImage->getLayerCount(); layer++)
+    {
+        for (uint32_t level = mBaseLevel; level < mImage->getLevelCount() - mBaseLevel; level++)
+        {
+            // ?? determine level extents, similar to mip map computation
+            gl::Rectangle sourceArea(0, 0, baseLevelExtents.width, baseLevelExtents.height);
+
+            // ?? what if format differs per level
+            const vk::Format &destVkFormat         = getImage().getFormat();
+            const angle::Format &destTextureFormat = destVkFormat.imageFormat();
+            size_t destinationAllocationSize =
+                sourceArea.width * sourceArea.height * destTextureFormat.pixelBytes;
+
+            uint8_t *destData = nullptr;
+            ANGLE_TRY(mImage->stageSubresourceUpdateAndGetData(
+                contextVk, destinationAllocationSize,
+                gl::ImageIndex::MakeFromType(mState.getType(), level, layer),
+                gl::Extents(sourceArea.width, sourceArea.height, 1), gl::Offset(), &destData));
+
+            // Just use byte type for now, TBD correct type
+            // const gl::InternalFormat &formatInfo =
+            //        getImage().getFormat().getInternalFormatInfo(GL_UNSIGNED_BYTE);
+            //
+            // const VkExtent3D baseLevelExtents = mImage->getExtents();
+
+            ANGLE_TRY(mImage->stageSubresourceUpdate(
+                contextVk, getNativeImageIndex(index),
+                // gl::Extents(area.width, area.height, area.depth),
+                // gl::Offset(area.x, area.y, area.z),
+                gl::Extents(1, 1, 1), gl::Offset(0, 0, 0), formatInfo,
+                // unpack,
+                // type,
+                mImageOriginalMips[layer][baseLevel + level],  // <-- pointer to source data
+                vkFormat));
+
+            onStagingBufferChange();
+        }
+    }
+
     // Read back all current layers and mip levels using existing mBaseLevel
     for (uint32_t layer = 0; layer < mImage->getLayerCount(); layer++)
     {
@@ -1131,31 +1179,18 @@ angle::Result TextureVk::setBaseLevel(const gl::Context *context, GLuint baseLev
             uint8_t *storedLevel = nullptr;
 
             // TBD where sizes come from
-            gl::Rectangle levelArea(0, 0, sourceLevel.width, sourceLevel.height);
+            //gl::Rectangle levelArea(0, 0, sourceLevel.width, sourceLevel.height);
+            gl::Rectangle levelArea(0, 0, 1, 1);
 
             // This function pulls from the currently active mImage
-            copyImageDataToBuffer(contextVk, level, layer, levelArea, &storedLevel);
+            ANGLE_TRY(copyImageDataToBuffer(contextVk, level, layer, levelArea, &storedLevel));
 
             // Track it in the original mip chain
             mImageOriginalMips[layer][mBaseLevel + level] = storedLevel;
         }
     }
 
-    // Stage the image updates using new baseLevel
-    for (uint32_t layer = 0; layer < mImage->getLayerCount(); layer++)
-    {
-        for (uint32_t level = baseLevel; level < mImage->getLevelCount() - baseLevel; level++)
-        {
-            ANGLE_TRY(mImage->stageSubresourceUpdate(
-                contextVk, getNativeImageIndex(index),
-                gl::Extents(area.width, area.height, area.depth),
-                gl::Offset(area.x, area.y, area.z), formatInfo, unpack, type,
-                mImageOriginalMips[layer][baseLevel + level],  // <-- source data
-                vkFormat));
-
-            onStagingBufferChange();
-        }
-    }
+    
 
     // Track the new base level
     mBaseLevel = baseLevel;
