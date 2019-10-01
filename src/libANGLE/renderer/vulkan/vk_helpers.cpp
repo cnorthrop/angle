@@ -1493,7 +1493,7 @@ angle::Result ImageHelper::initExternal(Context *context,
     mSamples    = samples;
     mBaseLevel  = baseLevel;
     mMaxLevel   = maxLevel;
-    mLevelCount = mipLevels;
+    mLevelCount = mipLevels - baseLevel;
     mLayerCount = layerCount;
 
     // Validate that mLayerCount is compatible with the texture type
