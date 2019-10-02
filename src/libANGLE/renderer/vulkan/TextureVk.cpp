@@ -105,6 +105,31 @@ bool HasBothDepthAndStencilAspects(VkImageAspectFlags aspectFlags)
         VK_IMAGE_ASPECT_STENCIL_BIT | VK_IMAGE_ASPECT_DEPTH_BIT;
     return (aspectFlags & kDepthStencilAspects) == kDepthStencilAspects;
 }
+
+float ClampSamplerMaxLod(const GLfloat maxLod, const GLenum minFilter)
+{
+    // CLN HACK HACK HACK
+
+    switch (minFilter)
+    {
+        case GL_LINEAR:
+        case GL_LINEAR_MIPMAP_LINEAR:
+        case GL_NEAREST_MIPMAP_LINEAR:
+        case GL_LINEAR_MIPMAP_NEAREST:
+            // No change
+            return maxLod;
+
+        case GL_NEAREST:
+        case GL_NEAREST_MIPMAP_NEAREST:
+            // Effectively disable minification filter
+            return 0.0;
+
+        default:
+            UNREACHABLE();
+    }
+
+    return maxLod;
+}
 }  // anonymous namespace
 
 TextureVk::TextureVkViews::TextureVkViews() {}
@@ -1465,22 +1490,22 @@ angle::Result TextureVk::syncState(const gl::Context *context,
     }
 
     // Create a simple sampler. Force basic parameter settings.
-    VkSamplerCreateInfo samplerInfo     = {};
-    samplerInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    samplerInfo.flags                   = 0;
-    samplerInfo.magFilter               = gl_vk::GetFilter(samplerState.getMagFilter());
-    samplerInfo.minFilter               = gl_vk::GetFilter(samplerState.getMinFilter());
-    samplerInfo.mipmapMode              = gl_vk::GetSamplerMipmapMode(samplerState.getMinFilter());
-    samplerInfo.addressModeU            = gl_vk::GetSamplerAddressMode(samplerState.getWrapS());
-    samplerInfo.addressModeV            = gl_vk::GetSamplerAddressMode(samplerState.getWrapT());
-    samplerInfo.addressModeW            = gl_vk::GetSamplerAddressMode(samplerState.getWrapR());
-    samplerInfo.mipLodBias              = 0.0f;
-    samplerInfo.anisotropyEnable        = anisotropyEnable;
-    samplerInfo.maxAnisotropy           = maxAnisotropy;
-    samplerInfo.compareEnable           = compareEnable;
-    samplerInfo.compareOp               = compareOp;
-    samplerInfo.minLod                  = samplerState.getMinLod();
-    samplerInfo.maxLod                  = samplerState.getMaxLod();
+    VkSamplerCreateInfo samplerInfo = {};
+    samplerInfo.sType               = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.flags               = 0;
+    samplerInfo.magFilter           = gl_vk::GetFilter(samplerState.getMagFilter());
+    samplerInfo.minFilter           = gl_vk::GetFilter(samplerState.getMinFilter());
+    samplerInfo.mipmapMode          = gl_vk::GetSamplerMipmapMode(samplerState.getMinFilter());
+    samplerInfo.addressModeU        = gl_vk::GetSamplerAddressMode(samplerState.getWrapS());
+    samplerInfo.addressModeV        = gl_vk::GetSamplerAddressMode(samplerState.getWrapT());
+    samplerInfo.addressModeW        = gl_vk::GetSamplerAddressMode(samplerState.getWrapR());
+    samplerInfo.mipLodBias          = 0.0f;
+    samplerInfo.anisotropyEnable    = anisotropyEnable;
+    samplerInfo.maxAnisotropy       = maxAnisotropy;
+    samplerInfo.compareEnable       = compareEnable;
+    samplerInfo.compareOp           = compareOp;
+    samplerInfo.minLod              = samplerState.getMinLod();
+    samplerInfo.maxLod                  = ClampSamplerMaxLod(samplerState.getMaxLod(), samplerState.getMinFilter());
     samplerInfo.borderColor             = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK;
     samplerInfo.unnormalizedCoordinates = VK_FALSE;
 
