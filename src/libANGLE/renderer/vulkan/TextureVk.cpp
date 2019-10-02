@@ -1169,7 +1169,10 @@ angle::Result TextureVk::changeLevels(ContextVk *contextVk, GLuint baseLevel, GL
     // Track the previous levels for use in update loop below
     uint32_t previousBaseLevel = mImage->getBaseLevel();
 
-    if (baseLevel == previousBaseLevel && mImage->getLevelCount() == maxLevel + 1)
+    bool baseLevelUnchanged = baseLevel == previousBaseLevel;
+    bool maxLevelUnchanged  = mImage->getLevelCount() == maxLevel + 1;
+
+    if (baseLevelUnchanged && maxLevelUnchanged)
     {
         // This scenario is a noop, most likely maxLevel has been lowered to a level that already
         // reflects the current state of the image
@@ -1231,7 +1234,8 @@ angle::Result TextureVk::changeLevels(ContextVk *contextVk, GLuint baseLevel, GL
 
             // We need to adjust the source Vulkan level to reflect the previous base level.
             // vk level 0 previously aligned with whatever the base level was.
-            uint32_t srcLevelVK = level - previousBaseLevel;
+            uint32_t srcLevelVk = baseLevelUnchanged ? level : level - previousBaseLevel;
+            ASSERT(srcLevelVk <= mImage->getLevelCount());
 
             // Adjust offset and depth based on our knowledge of image type here
             gl::Box area(0, 0, 0, extents.width, extents.height, extents.depth);
@@ -1244,7 +1248,7 @@ angle::Result TextureVk::changeLevels(ContextVk *contextVk, GLuint baseLevel, GL
             // Now copy from the image to the staging buffer
             vk::BufferHelper *stagingBuffer  = nullptr;
             VkDeviceSize stagingBufferOffset = 0;
-            ANGLE_TRY(copyImageDataToBuffer(contextVk, srcLevelVK, 1, layer, area, &stagingBuffer,
+            ANGLE_TRY(copyImageDataToBuffer(contextVk, srcLevelVk, 1, layer, area, &stagingBuffer,
                                             &stagingBufferOffset, nullptr));
 
             // Stage an update to the new image that we will populate with existing mip levels
@@ -1262,7 +1266,7 @@ angle::Result TextureVk::changeLevels(ContextVk *contextVk, GLuint baseLevel, GL
     // Now that we've staged all the updates, release the current image so that it will be
     // recreated with the correct number of mip levels, base level, and max level.
     releaseImage(contextVk);
-    releaseImageViews(contextVk);
+    //releaseImageViews(contextVk);
 
     return angle::Result::Continue;
 }
